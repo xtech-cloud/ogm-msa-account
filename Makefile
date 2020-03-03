@@ -1,8 +1,16 @@
 
+.PHONY: clean
+clean: 
+	rm -rf /tmp/msa-account.db
+
 .PHONY: build
 build: 
 	mkdir -p ./bin
 	go build -o ./bin/
+
+.PHONY: run
+run: build
+	./bin/omo-msa-account
 
 .PHONY: install
 install: 
@@ -12,8 +20,8 @@ install:
 call:
 	MICRO_REGISTRY=consul micro call omo.msa.account Auth.Signup '{"username":"user001", "password":"11112222"}'
 	MICRO_REGISTRY=consul micro call omo.msa.account Auth.Signin '{"strategy":1, "username":"user", "password":"22223333"}'
-	MICRO_REGISTRY=consul micro call omo.msa.account Auth.Signin '{"strategy":1, "username":"user001", "password":"11112222"}'
-	MICRO_REGISTRY=consul micro call omo.msa.account Auth.Signin '{"strategy":1, "username":"user001", "password":"22223333"}'
+	MICRO_REGISTRY=consul micro call omo.msa.account Auth.Signin '{"strategy":1, "username":"user001", "password":"222333444"}'
+	MICRO_REGISTRY=consul micro call omo.msa.account Auth.Signin '{"strategy":1, "username":"user001", "password":"11112222"}' 
 	MICRO_REGISTRY=consul micro call omo.msa.account Auth.Signout '{"accessToken":"sssssssss"}'
 	MICRO_REGISTRY=consul micro call omo.msa.account Auth.ResetPasswd '{"accessToken":"sssssssss", "password":"22221111"}'
 	MICRO_REGISTRY=consul micro call omo.msa.account Profile.Update '{"accessToken":"sssssssss", "profile":"sdasdsada"}'

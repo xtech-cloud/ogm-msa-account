@@ -34,7 +34,7 @@ func (this *Auth) Signup(_ctx context.Context, _req *proto.SignupRequest, _rsp *
 	account := model.Account{
 		UUID:     uuid,
 		Username: _req.Username,
-		Password: dao.StrengthenPassword(_req.Password, _req.Username),
+		Password: dao.GeneratePassword(_req.Password, _req.Username),
 		Profile:  "",
 	}
 	err = dao.Insert(account)
@@ -53,7 +53,6 @@ func (this *Auth) Signin(_ctx context.Context, _req *proto.SigninRequest, _rsp *
 	dao := model.NewAccountDAO()
 
 	username := _req.Username
-	password := dao.StrengthenPassword(_req.Password, _req.Username)
 
 	account, err := dao.WhereUsername(username)
 	if nil != err {
@@ -66,13 +65,18 @@ func (this *Auth) Signin(_ctx context.Context, _req *proto.SigninRequest, _rsp *
 		return nil
 	}
 
-	if account.Password != password {
+	err = dao.VerifyPassword(_req.Password, _req.Username, account.Password)
+	if nil != err {
 		_rsp.Status.Code = 1
 		_rsp.Status.Message = "password not matched"
 		return nil
 	}
 	if proto.Strategy_JWT == _req.Strategy {
-		_rsp.AccessToken = account.UUID
+		token, err := tokenFromJWT(account.UUID)
+		if nil != err {
+			return nil
+		}
+		_rsp.AccessToken = token
 	} else {
 		_rsp.AccessToken = account.UUID
 	}
@@ -90,7 +94,12 @@ func (this *Auth) ResetPasswd(_ctx context.Context, _req *proto.ResetPasswdReque
 	_rsp.Status = &proto.Status{}
 	dao := model.NewAccountDAO()
 
-	uuid := takeUUID(_req.AccessToken)
+	uuid, err := useridFromToken(_req.AccessToken, _req.Strategy)
+	if nil != err {
+		return err
+	}
+
+	logger.Infof("uuid is %v", uuid)
 
 	account, err := dao.Find(uuid)
 	if nil != err {
@@ -102,6 +111,6 @@ func (this *Auth) ResetPasswd(_ctx context.Context, _req *proto.ResetPasswdReque
 		return nil
 	}
 
-	password := dao.StrengthenPassword(_req.Password, account.Username)
+	password := dao.GeneratePassword(_req.Password, account.Username)
 	return dao.UpdatePassword(uuid, password)
 }

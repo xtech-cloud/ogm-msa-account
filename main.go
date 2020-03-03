@@ -20,8 +20,9 @@ func main() {
 	service := micro.NewService(
 		micro.Name("omo.msa.account"),
 		micro.Version("latest"),
-		micro.RegisterTTL(time.Second*time.Duration(config.Scheme.Service.TTL)),
-		micro.RegisterInterval(time.Second*time.Duration(config.Scheme.Service.Interval)),
+		micro.RegisterTTL(time.Second*time.Duration(config.Schema.Service.TTL)),
+		micro.RegisterInterval(time.Second*time.Duration(config.Schema.Service.Interval)),
+		micro.Address(config.Schema.Service.Address),
 	)
 
 	// Initialise service

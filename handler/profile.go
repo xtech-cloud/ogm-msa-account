@@ -15,7 +15,10 @@ func (this *Profile) Query(_ctx context.Context, _req *proto.QueryProfileRequest
 	_rsp.Status = &proto.Status{}
 	dao := model.NewAccountDAO()
 
-	uuid := takeUUID(_req.AccessToken)
+	uuid, err := useridFromToken(_req.AccessToken, _req.Strategy)
+	if nil != err {
+		return err
+	}
 	account, err := dao.Find(uuid)
 	if nil != err {
 		return err
@@ -34,7 +37,10 @@ func (this *Profile) Update(_ctx context.Context, _req *proto.UpdateProfileReque
 	_rsp.Status = &proto.Status{}
 	dao := model.NewAccountDAO()
 
-	uuid := takeUUID(_req.AccessToken)
+	uuid, err := useridFromToken(_req.AccessToken, _req.Strategy)
+	if nil != err {
+		return err
+	}
 	account, err := dao.Find(uuid)
 	if nil != err {
 		return err

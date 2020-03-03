@@ -24,7 +24,7 @@ type ConfigDefine struct {
 
 var configDefine ConfigDefine
 
-var Scheme ConfigScheme_
+var Schema ConfigSchema_
 
 func setupEnvironment() {
 	//registry plugin
@@ -66,7 +66,7 @@ func mergeFile(_config config.Config) {
 		logger.Errorf("load config %v failed: %v", filepath, err)
 	} else {
 		logger.Infof("load config %v success", filepath)
-		_config.Scan(&Scheme)
+		_config.Scan(&Schema)
 	}
 }
 
@@ -87,7 +87,7 @@ func mergeConsul(_config config.Config) {
 			logger.Errorf("load config %v from %v failed: %v", consulKey, addr, err)
 		}
 	}
-	_config.Get(configDefine.Key).Scan(&Scheme)
+	_config.Get(configDefine.Key).Scan(&Schema)
 }
 
 func mergeEtcd(_config config.Config) {
@@ -107,7 +107,7 @@ func mergeEtcd(_config config.Config) {
 			logger.Errorf("load config %v from %v failed: %v", etcdKey, addr, err)
 		}
 	}
-	_config.Get(configDefine.Key).Scan(&Scheme)
+	_config.Get(configDefine.Key).Scan(&Schema)
 }
 
 func Setup() {
@@ -124,7 +124,7 @@ func Setup() {
 		memory.WithYAML([]byte(defaultYAML)),
 	)
 	conf.Load(memorySource)
-	conf.Scan(&Scheme)
+	conf.Scan(&Schema)
 
 	// merge others
 	if "file" == configDefine.Source {
@@ -135,7 +135,7 @@ func Setup() {
 		mergeEtcd(conf)
 	}
 
-	ycd, err := goYAML.Marshal(&Scheme)
+	ycd, err := goYAML.Marshal(&Schema)
 	if nil != err {
 		logger.Error(err)
 	} else {

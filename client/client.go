@@ -3,15 +3,14 @@ package main
 import (
 	"context"
 	"fmt"
+	"omo-msa-account/config"
 	"time"
-
-	"omo-msa-startkit/config"
-	msa "omo-msa-startkit/proto/msa"
 
 	"github.com/micro/go-micro/v2"
 	"github.com/micro/go-micro/v2/client"
 	_ "github.com/micro/go-plugins/registry/consul/v2"
 	_ "github.com/micro/go-plugins/registry/etcdv3/v2"
+	proto "github.com/xtech-cloud/omo-msp-account/proto/account"
 )
 
 func main() {
@@ -32,18 +31,141 @@ func main() {
 		}),
 	)
 
-	startkit := msa.NewStartKitService("omo.msa.startkit", cli)
+	auth := proto.NewAuthService("omo.msa.account", cli)
+	profile := proto.NewProfileService("omo.msa.account", cli)
 
 	for range time.Tick(4 * time.Second) {
 		fmt.Println("----------------------------------------------------------")
+		test(auth, profile)
+	}
+}
+
+func test(_auth proto.AuthService, _profile proto.ProfileService) {
+	accessToken := ""
+
+	{
+		fmt.Println("> Signup")
 		// Make request
-		rsp, err := startkit.Call(context.Background(), &msa.Request{
-			Name: time.Now().String() + " | MSA-StartKit",
+		rsp, err := _auth.Signup(context.Background(), &proto.SignupRequest{
+			Username: "user001",
+			Password: "11112222",
 		})
 		if err != nil {
 			fmt.Println(err)
 		} else {
-			fmt.Println(rsp.Msg)
+			fmt.Println(rsp)
+		}
+	}
+
+	//错误账号
+	{
+		fmt.Println("> Signin")
+		// Make request
+		rsp, err := _auth.Signin(context.Background(), &proto.SigninRequest{
+			Strategy: proto.Strategy_JWT,
+			Username: "user",
+			Password: "11112222",
+		})
+		if err != nil {
+			fmt.Println(err)
+		} else {
+			fmt.Println(rsp)
+		}
+	}
+
+	//错误密码
+	{
+		fmt.Println("> Signin")
+		// Make request
+		rsp, err := _auth.Signin(context.Background(), &proto.SigninRequest{
+			Strategy: proto.Strategy_JWT,
+			Username: "user001",
+			Password: "11223344",
+		})
+		if err != nil {
+			fmt.Println(err)
+		} else {
+			fmt.Println(rsp)
+		}
+	}
+
+	//正确账号
+	{
+		fmt.Println("> Signin")
+		// Make request
+		rsp, err := _auth.Signin(context.Background(), &proto.SigninRequest{
+			Strategy: proto.Strategy_JWT,
+			Username: "user001",
+			Password: "11112222",
+		})
+		if err != nil {
+			fmt.Println(err)
+		} else {
+			fmt.Println(rsp)
+			accessToken = rsp.AccessToken
+		}
+	}
+
+	//重置密码
+	{
+		fmt.Println("> ResetPasswd")
+		// Make request
+		rsp, err := _auth.ResetPasswd(context.Background(), &proto.ResetPasswdRequest{
+			Strategy:    proto.Strategy_JWT,
+			AccessToken: accessToken,
+			Password:    "abcdefg",
+		})
+		if err != nil {
+			fmt.Println(err)
+		} else {
+			fmt.Println(rsp)
+		}
+	}
+
+	//重置密码
+	{
+		fmt.Println("> ResetPasswd")
+		// Make request
+		rsp, err := _auth.ResetPasswd(context.Background(), &proto.ResetPasswdRequest{
+			Strategy:    proto.Strategy_JWT,
+			AccessToken: accessToken,
+			Password:    "11112222",
+		})
+		if err != nil {
+			fmt.Println(err)
+		} else {
+			fmt.Println(rsp)
+		}
+	}
+
+	//更新Profile
+	{
+		fmt.Println("> Update")
+		// Make request
+		rsp, err := _profile.Update(context.Background(), &proto.UpdateProfileRequest{
+			Strategy:    proto.Strategy_JWT,
+			AccessToken: accessToken,
+			Profile:     "mongodb:" + time.Now().String(),
+		})
+		if err != nil {
+			fmt.Println(err)
+		} else {
+			fmt.Println(rsp)
+		}
+	}
+
+	//查询Profile
+	{
+		fmt.Println("> Query")
+		// Make request
+		rsp, err := _profile.Query(context.Background(), &proto.QueryProfileRequest{
+			Strategy:    proto.Strategy_JWT,
+			AccessToken: accessToken,
+		})
+		if err != nil {
+			fmt.Println(err)
+		} else {
+			fmt.Println(rsp)
 		}
 	}
 }

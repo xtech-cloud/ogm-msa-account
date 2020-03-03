@@ -21,17 +21,17 @@ var dialectSqlArgs string
 var saltSuffix string
 
 func Setup() {
-	if config.Scheme.Database.Lite {
+	if config.Schema.Database.Lite {
 		dialectSqlName = "sqlite3"
-		sqlite_filepath := config.Scheme.Database.SQLite.Path
+		sqlite_filepath := config.Schema.Database.SQLite.Path
 		dialectSqlArgs = sqlite_filepath
 		logger.Warnf("!!! Database is lite mode, file at %v", sqlite_filepath)
 	} else {
 		dialectSqlName = "mysql"
-		mysql_addr := config.Scheme.Database.MySQL.Address
-		mysql_user := config.Scheme.Database.MySQL.User
-		mysql_passwd := config.Scheme.Database.MySQL.Password
-		mysql_db := config.Scheme.Database.MySQL.DB
+		mysql_addr := config.Schema.Database.MySQL.Address
+		mysql_user := config.Schema.Database.MySQL.User
+		mysql_passwd := config.Schema.Database.MySQL.Password
+		mysql_db := config.Schema.Database.MySQL.DB
 		dialectSqlArgs = fmt.Sprintf("%s:%s@(%s)/%s?charset=utf8&parseTime=True", mysql_user, mysql_passwd, mysql_addr, mysql_db)
 	}
 }
@@ -65,6 +65,12 @@ func NewUUID() string {
 }
 
 func ToUUID(_content string) string {
+	h := md5.New()
+	h.Write([]byte(_content))
+	return hex.EncodeToString(h.Sum(nil))
+}
+
+func MD5(_content string) string {
 	h := md5.New()
 	h.Write([]byte(_content))
 	return hex.EncodeToString(h.Sum(nil))

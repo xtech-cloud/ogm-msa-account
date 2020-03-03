@@ -2,6 +2,7 @@ package config
 
 const defaultYAML string = `
 service:
+    address: :8080
     ttl: 15
     interval: 10
 logger:
@@ -17,4 +18,7 @@ database:
         path: /tmp/msa-account.db
 encrypt:
     secret: 964E50CA8F603714BF373A4C03E07739
+token:
+    jwt:
+        expiry: 1
 `
