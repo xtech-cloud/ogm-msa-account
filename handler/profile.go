@@ -13,6 +13,12 @@ type Profile struct{}
 func (this *Profile) Query(_ctx context.Context, _req *proto.QueryProfileRequest, _rsp *proto.QueryProfileResponse) error {
 	logger.Infof("Received Profile.Query, accessToken is %v", _req.AccessToken)
 	_rsp.Status = &proto.Status{}
+	if "" == _req.AccessToken {
+		_rsp.Status.Code = 1
+		_rsp.Status.Message = "accessToken is required"
+		return nil
+	}
+
 	dao := model.NewAccountDAO()
 
 	uuid, err := useridFromToken(_req.AccessToken, _req.Strategy)
@@ -24,7 +30,7 @@ func (this *Profile) Query(_ctx context.Context, _req *proto.QueryProfileRequest
 		return err
 	}
 	if "" == account.UUID {
-		_rsp.Status.Code = 1
+		_rsp.Status.Code = 2
 		_rsp.Status.Message = "account not found"
 		return nil
 	}
@@ -37,6 +43,12 @@ func (this *Profile) Update(_ctx context.Context, _req *proto.UpdateProfileReque
 	_rsp.Status = &proto.Status{}
 	dao := model.NewAccountDAO()
 
+	if "" == _req.AccessToken {
+		_rsp.Status.Code = 1
+		_rsp.Status.Message = "accessToken is required"
+		return nil
+	}
+
 	uuid, err := useridFromToken(_req.AccessToken, _req.Strategy)
 	if nil != err {
 		return err
@@ -46,7 +58,7 @@ func (this *Profile) Update(_ctx context.Context, _req *proto.UpdateProfileReque
 		return err
 	}
 	if "" == account.UUID {
-		_rsp.Status.Code = 1
+		_rsp.Status.Code = 2
 		_rsp.Status.Message = "account not found"
 		return nil
 	}

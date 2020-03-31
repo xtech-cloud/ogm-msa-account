@@ -2,18 +2,19 @@ package config
 
 const defaultYAML string = `
 service:
-    address: :8080
+    address: :9600
     ttl: 15
     interval: 10
 logger:
-    level: 5
+    level: trace
+    dir: /var/log/msa/
 database:
     lite: true
     mysql:
         address: 127.0.0.1:3306
         user: root
         password: mysql@OMO
-        db: account
+        db: msa_account
     sqlite:
         path: /tmp/msa-account.db
 encrypt:

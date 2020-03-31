@@ -1,7 +1,8 @@
 package config
 
 type Logger_ struct {
-	Level int `yaml:level`
+	Level string `yaml:level`
+	Dir   string `yaml:dir`
 }
 
 type SQLite_ struct {
@@ -30,13 +31,13 @@ type JWT_ struct {
 }
 
 type Token_ struct {
-    JWT JWT_ `yaml:jwt`
+	JWT JWT_ `yaml:jwt`
 }
 
 type Service_ struct {
-	TTL      int64 `yaml:ttl`
-	Interval int64 `yaml:interval`
-    Address string `yaml:address`
+	TTL      int64  `yaml:ttl`
+	Interval int64  `yaml:interval`
+	Address  string `yaml:address`
 }
 
 type ConfigSchema_ struct {
@@ -44,5 +45,5 @@ type ConfigSchema_ struct {
 	Logger   Logger_   `yaml:logger`
 	Database Database_ `yaml:database`
 	Encrypt  Encrypt_  `yaml:encrypt`
-    Token Token_ `yaml:token`
+	Token    Token_    `yaml:token`
 }

@@ -1,20 +1,29 @@
-
-.PHONY: clean
-clean: 
-	rm -rf /tmp/msa-account.db
+APP_NAME := omo-msa-account
+BUILD_VERSION   := $(shell git tag --contains)
+BUILD_TIME      := $(shell date "+%F %T")
+COMMIT_SHA1     := $(shell git rev-parse HEAD )
 
 .PHONY: build
 build: 
-	mkdir -p ./bin
-	go build -o ./bin/
+	go build -ldflags \
+		"\
+		-X 'main.BuildVersion=${BUILD_VERSION}' \
+		-X 'main.BuildTime=${BUILD_TIME}' \
+		-X 'main.CommitID=${COMMIT_SHA1}' \
+		"\
+		-o ./bin/${APP_NAME}
 
 .PHONY: run
-run: build
-	./bin/omo-msa-account
+run: 
+	./bin/${APP_NAME}
 
 .PHONY: install
 install: 
 	go install
+
+.PHONY: clean
+clean: 
+	rm -rf /tmp/msa-account.db
 
 .PHONY: call
 call:
@@ -32,6 +41,11 @@ tcall:
 	mkdir -p ./bin
 	go build -o ./bin/ ./client
 	./bin/client
+
+.PHONY: dist
+dist:
+	mkdir dist
+	tar -zcf dist/${APP_NAME}-${BUILD_VERSION}.tar.gz ./bin/${APP_NAME}
 
 .PHONY: docker
 docker:
