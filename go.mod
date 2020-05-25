@@ -16,10 +16,11 @@ require (
 	github.com/micro/go-plugins/registry/etcd/v2 v2.0.3
 	github.com/micro/go-plugins/registry/etcdv3/v2 v2.0.3
 	github.com/micro/go-plugins/registry/kubernetes/v2 v2.0.3
+	github.com/netdata/go-orchestrator v0.0.0-20200312103602-3597f4b39706
 	github.com/satori/go.uuid v1.2.0
 	github.com/sirupsen/logrus v1.4.2
 	github.com/tidwall/gjson v1.6.0 // indirect
-	github.com/xtech-cloud/omo-msp-account v1.1.0
+	github.com/xtech-cloud/omo-msp-account v1.2.0
 	golang.org/x/crypto v0.0.0-20200221231518-2aa609cf4a9d
 	gopkg.in/dgrijalva/jwt-go.v3 v3.2.0 // indirect
 	gopkg.in/yaml.v2 v2.2.2

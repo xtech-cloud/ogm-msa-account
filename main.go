@@ -7,6 +7,7 @@ import (
 	"omo-msa-account/config"
 	"omo-msa-account/handler"
 	"omo-msa-account/model"
+	"omo-msa-account/publisher"
 	"os"
 	"path/filepath"
 	"time"
@@ -24,7 +25,7 @@ func main() {
 	// New Service
 	service := micro.NewService(
 		micro.Name("omo.msa.account"),
-		micro.Version("latest"),
+		micro.Version(BuildVersion),
 		micro.RegisterTTL(time.Second*time.Duration(config.Schema.Service.TTL)),
 		micro.RegisterInterval(time.Second*time.Duration(config.Schema.Service.Interval)),
 		micro.Address(config.Schema.Service.Address),
@@ -33,6 +34,8 @@ func main() {
 	// Initialise service
 	service.Init()
 
+	// Register publisher
+	publisher.DefaultPublisher = micro.NewPublisher("omo.msa.account.notification", service.Client())
 	// Register Handler
 	proto.RegisterAuthHandler(service.Server(), new(handler.Auth))
 	proto.RegisterProfileHandler(service.Server(), new(handler.Profile))

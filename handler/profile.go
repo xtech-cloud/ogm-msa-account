@@ -3,6 +3,7 @@ package handler
 import (
 	"context"
 	"omo-msa-account/model"
+	"omo-msa-account/publisher"
 
 	"github.com/micro/go-micro/v2/logger"
 	proto "github.com/xtech-cloud/omo-msp-account/proto/account"
@@ -35,6 +36,13 @@ func (this *Profile) Query(_ctx context.Context, _req *proto.QueryProfileRequest
 		return nil
 	}
 	_rsp.Profile = account.Profile
+
+	// 发布消息
+	publisher.Publish(&proto.Notification{
+		Action: "/profile/query",
+		Head:   _req.AccessToken,
+		Body:   "",
+	})
 	return nil
 }
 
@@ -62,5 +70,15 @@ func (this *Profile) Update(_ctx context.Context, _req *proto.UpdateProfileReque
 		_rsp.Status.Message = "account not found"
 		return nil
 	}
-	return dao.UpdateProfile(uuid, _req.Profile)
+	err = dao.UpdateProfile(uuid, _req.Profile)
+	if nil != err {
+		return err
+	}
+	// 发布消息
+	publisher.Publish(&proto.Notification{
+		Action: "/profile/update",
+		Head:   _req.AccessToken,
+		Body:   "",
+	})
+	return nil
 }

@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"omo-msa-account/model"
+	"omo-msa-account/publisher"
 
 	"github.com/micro/go-micro/v2/logger"
 
@@ -57,6 +58,13 @@ func (this *Auth) Signup(_ctx context.Context, _req *proto.SignupRequest, _rsp *
 
 	// 无错误
 	_rsp.Uuid = uuid
+
+	// 发布消息
+	publisher.Publish(&proto.Notification{
+		Action: "/signup",
+		Head:   "",
+		Body:   uuid,
+	})
 	return nil
 }
 
@@ -91,8 +99,6 @@ func (this *Auth) Signin(_ctx context.Context, _req *proto.SigninRequest, _rsp *
 		return nil
 	}
 
-	logger.Debugf(_req.Password)
-	logger.Debugf(account.Password)
 	err = dao.VerifyPassword(_req.Password, _req.Username, account.Password)
 	if nil != err {
 		_rsp.Status.Code = 1
@@ -109,12 +115,25 @@ func (this *Auth) Signin(_ctx context.Context, _req *proto.SigninRequest, _rsp *
 		_rsp.AccessToken = account.UUID
 	}
 	_rsp.Uuid = account.UUID
+	// 发布消息
+	publisher.Publish(&proto.Notification{
+		Action: "/signin",
+		Head:   _rsp.AccessToken,
+		Body:   _rsp.Uuid,
+	})
 	return nil
 }
 
 func (this *Auth) Signout(_ctx context.Context, _req *proto.SignoutRequest, _rsp *proto.SignoutResponse) error {
 	logger.Infof("Received Auth.Signout, accessToken is %v", _req.AccessToken)
 	_rsp.Status = &proto.Status{}
+
+	// 发布消息
+	publisher.Publish(&proto.Notification{
+		Action: "/signout",
+		Head:   _req.AccessToken,
+		Body:   "",
+	})
 	return nil
 }
 
@@ -154,5 +173,16 @@ func (this *Auth) ResetPasswd(_ctx context.Context, _req *proto.ResetPasswdReque
 	}
 
 	password := dao.GeneratePassword(_req.Password, account.Username)
-	return dao.UpdatePassword(uuid, password)
+	err = dao.UpdatePassword(uuid, password)
+	if nil != err {
+		return err
+	}
+
+	// 发布消息
+	publisher.Publish(&proto.Notification{
+		Action: "/reset/password",
+		Head:   _req.AccessToken,
+		Body:   "",
+	})
+	return nil
 }
