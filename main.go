@@ -39,6 +39,7 @@ func main() {
 	// Register Handler
 	proto.RegisterAuthHandler(service.Server(), new(handler.Auth))
 	proto.RegisterProfileHandler(service.Server(), new(handler.Profile))
+	proto.RegisterQueryHandler(service.Server(), new(handler.Query))
 
 	app, _ := filepath.Abs(os.Args[0])
 

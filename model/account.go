@@ -160,3 +160,25 @@ func (AccountDAO) WhereUsername(_username string) (Account, error) {
 	}
 	return account, res.Error
 }
+
+func (AccountDAO) List(_offset int64, _count int64) ([]*Account, error) {
+	db, err := openSqlDB()
+	if nil != err {
+		return nil, err
+	}
+	defer closeSqlDB(db)
+
+	var accounts []*Account
+	res := db.Offset(_offset).Limit(_count).Order("created_at desc").Find(&accounts)
+	return accounts, res.Error
+}
+func (AccountDAO) Count() (int64, error) {
+	db, err := openSqlDB()
+	if nil != err {
+		return 0, err
+	}
+	defer closeSqlDB(db)
+	count := int64(0)
+	res := db.Model(&Account{}).Count(&count)
+	return count, res.Error
+}

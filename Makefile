@@ -37,6 +37,7 @@ call:
 	MICRO_REGISTRY=consul micro call omo.msa.account Auth.ResetPasswd '{"accessToken":"${TOKEN}", "password":"11112222", "strategy":1}'
 	MICRO_REGISTRY=consul micro call omo.msa.account Profile.Update '{"accessToken":"${TOKEN}", "profile":"sdasdsada", "strategy":1}'
 	MICRO_REGISTRY=consul micro call omo.msa.account Profile.Query '{"accessToken":"${TOKEN}", "strategy":1}'
+	MICRO_REGISTRY=consul micro call omo.msa.account Query.List '{"count":10}'
 
 .PHONY: tcall
 tcall:

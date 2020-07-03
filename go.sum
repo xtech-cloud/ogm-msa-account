@@ -522,6 +522,10 @@ github.com/xtech-cloud/omo-msp-account v1.1.0 h1:TbjWW2NXJAGItxa1CDHV13ZIszXuAeL
 github.com/xtech-cloud/omo-msp-account v1.1.0/go.mod h1:Q+PfVmEDIyOKZDGg13zJwTCiQBWDru+cZXKMuUpRvSs=
 github.com/xtech-cloud/omo-msp-account v1.2.0 h1:02+HS0zUJn/HNTDweJT2etcJPP+uEBxd/pJKyYHwu88=
 github.com/xtech-cloud/omo-msp-account v1.2.0/go.mod h1:Q+PfVmEDIyOKZDGg13zJwTCiQBWDru+cZXKMuUpRvSs=
+github.com/xtech-cloud/omo-msp-account v1.3.0 h1:LzTnlRnDTjEgg6b4a3zKz3Ny4gmA+1Bo6vyNTHCMa2w=
+github.com/xtech-cloud/omo-msp-account v1.3.0/go.mod h1:Q+PfVmEDIyOKZDGg13zJwTCiQBWDru+cZXKMuUpRvSs=
+github.com/xtech-cloud/omo-msp-account v1.3.1 h1:3WzXUypZG/wL4arioxB+g3kTIigpohdi8aU46sMg0Y0=
+github.com/xtech-cloud/omo-msp-account v1.3.1/go.mod h1:Q+PfVmEDIyOKZDGg13zJwTCiQBWDru+cZXKMuUpRvSs=
 github.com/xtech-cloud/omo-msp-mlb v1.1.4 h1:atl1Ki7LZmysnjkDmyt1oFuXReRIOFXDfsNXX5AdjxA=
 github.com/xtech-cloud/omo-msp-mlb v1.1.4/go.mod h1:UI4lJrUoMkbgprGBM9LlnJA8VaBJBMGFJQFCApxxCYc=
 go.etcd.io/bbolt v1.3.3/go.mod h1:IbVyRI1SCnLcuJnV2u8VeU0CEYM7e686BmAb1XKL+uU=
