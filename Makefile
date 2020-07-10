@@ -32,7 +32,7 @@ call:
 	MICRO_REGISTRY=consul micro call omo.msa.account Auth.Signin '{"strategy":1, "username":"user", "password":"22223333"}'
 	MICRO_REGISTRY=consul micro call omo.msa.account Auth.Signin '{"strategy":1, "username":"user001", "password":"222333444"}'
 	MICRO_REGISTRY=consul micro call omo.msa.account Auth.Signin '{"strategy":1, "username":"user001", "password":"11112222"}' 
-	MICRO_REGISTRY=consul micro call omo.msa.account Auth.Signout '{"accessToken":"${TOKEN}"}'
+	MICRO_REGISTRY=consul micro call omo.msa.account Auth.Signout '{"accessToken":"${TOKEN}", "strategy":1}'
 	MICRO_REGISTRY=consul micro call omo.msa.account Auth.ResetPasswd '{"accessToken":"${TOKEN}", "password":"22221111", "strategy":1}'
 	MICRO_REGISTRY=consul micro call omo.msa.account Auth.ResetPasswd '{"accessToken":"${TOKEN}", "password":"11112222", "strategy":1}'
 	MICRO_REGISTRY=consul micro call omo.msa.account Profile.Update '{"accessToken":"${TOKEN}", "profile":"sdasdsada", "strategy":1}'

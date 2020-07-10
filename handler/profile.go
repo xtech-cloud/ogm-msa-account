@@ -38,11 +38,12 @@ func (this *Profile) Query(_ctx context.Context, _req *proto.QueryProfileRequest
 	_rsp.Profile = account.Profile
 
 	// 发布消息
+	ctx := buildNotifyContext(_ctx, account.UUID)
 	publisher.Publish(&proto.Notification{
 		Action: "/profile/query",
 		Head:   _req.AccessToken,
-		Body:   "",
-	})
+		Body:   account.UUID,
+	}, ctx)
 	return nil
 }
 
@@ -75,10 +76,11 @@ func (this *Profile) Update(_ctx context.Context, _req *proto.UpdateProfileReque
 		return err
 	}
 	// 发布消息
+	ctx := buildNotifyContext(_ctx, account.UUID)
 	publisher.Publish(&proto.Notification{
 		Action: "/profile/update",
 		Head:   _req.AccessToken,
-		Body:   "",
-	})
+		Body:   account.UUID,
+	}, ctx)
 	return nil
 }

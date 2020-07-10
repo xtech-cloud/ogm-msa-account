@@ -6,9 +6,9 @@ import (
 	"omo-msa-account/config"
 	"time"
 
-	"github.com/micro/go-micro/metadata"
 	"github.com/micro/go-micro/v2"
 	"github.com/micro/go-micro/v2/client"
+	"github.com/micro/go-micro/v2/metadata"
 	_ "github.com/micro/go-plugins/registry/consul/v2"
 	_ "github.com/micro/go-plugins/registry/etcdv3/v2"
 	proto "github.com/xtech-cloud/omo-msp-account/proto/account"
@@ -18,8 +18,12 @@ type Notification struct {
 }
 
 func (this *Notification) Handle(_ctx context.Context, _notify *proto.Notification) error {
-	md, _ := metadata.FromContext(_ctx)
-	fmt.Println(fmt.Sprintf("[omo.msa.account.notification] Received notify %+v with metadata %+v", _notify, md))
+	md, ok := metadata.FromContext(_ctx)
+	if ok {
+		fmt.Println(fmt.Sprintf("[omo.msa.account.notification] Received notify %+v with metadata %+v", _notify, md))
+	} else {
+		fmt.Println(fmt.Sprintf("[omo.msa.account.notification] Received notify %+v without metadata", _notify))
+	}
 	return nil
 }
 

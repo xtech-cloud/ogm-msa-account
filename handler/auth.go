@@ -15,6 +15,7 @@ type Auth struct{}
 
 func (this *Auth) Signup(_ctx context.Context, _req *proto.SignupRequest, _rsp *proto.SignupResponse) error {
 	logger.Infof("Received Auth.Signup, username is %v", _req.Username)
+
 	_rsp.Status = &proto.Status{}
 
 	if "" == _req.Username {
@@ -60,11 +61,12 @@ func (this *Auth) Signup(_ctx context.Context, _req *proto.SignupRequest, _rsp *
 	_rsp.Uuid = uuid
 
 	// 发布消息
+	ctx := buildNotifyContext(_ctx, uuid)
 	publisher.Publish(&proto.Notification{
 		Action: "/signup",
 		Head:   "",
 		Body:   uuid,
-	})
+	}, ctx)
 	return nil
 }
 
@@ -116,11 +118,12 @@ func (this *Auth) Signin(_ctx context.Context, _req *proto.SigninRequest, _rsp *
 	}
 	_rsp.Uuid = account.UUID
 	// 发布消息
+	ctx := buildNotifyContext(_ctx, account.UUID)
 	publisher.Publish(&proto.Notification{
 		Action: "/signin",
 		Head:   _rsp.AccessToken,
 		Body:   _rsp.Uuid,
-	})
+	}, ctx)
 	return nil
 }
 
@@ -128,12 +131,18 @@ func (this *Auth) Signout(_ctx context.Context, _req *proto.SignoutRequest, _rsp
 	logger.Infof("Received Auth.Signout, accessToken is %v", _req.AccessToken)
 	_rsp.Status = &proto.Status{}
 
+	uuid, err := useridFromToken(_req.AccessToken, _req.Strategy)
+	if nil != err {
+		return err
+	}
+
 	// 发布消息
+	ctx := buildNotifyContext(_ctx, uuid)
 	publisher.Publish(&proto.Notification{
 		Action: "/signout",
 		Head:   _req.AccessToken,
-		Body:   "",
-	})
+		Body:   uuid,
+	}, ctx)
 	return nil
 }
 
@@ -179,10 +188,11 @@ func (this *Auth) ResetPasswd(_ctx context.Context, _req *proto.ResetPasswdReque
 	}
 
 	// 发布消息
+	ctx := buildNotifyContext(_ctx, uuid)
 	publisher.Publish(&proto.Notification{
 		Action: "/reset/password",
 		Head:   _req.AccessToken,
-		Body:   "",
-	})
+		Body:   uuid,
+	}, ctx)
 	return nil
 }

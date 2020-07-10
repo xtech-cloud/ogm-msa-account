@@ -10,8 +10,8 @@ import (
 
 var DefaultPublisher micro.Event
 
-func Publish(_notification *proto.Notification) {
-	err := DefaultPublisher.Publish(context.Background(), _notification)
+func Publish(_notification *proto.Notification, _ctx context.Context) {
+	err := DefaultPublisher.Publish(_ctx, _notification)
 	if nil != err {
 		logger.Error(err)
 	}
