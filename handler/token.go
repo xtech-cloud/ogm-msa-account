@@ -20,7 +20,7 @@ func tokenFromJWT(_userid string) (string, error) {
 }
 
 func useridFromToken(_token string, _strategy proto.Strategy) (string, error) {
-	if proto.Strategy_JWT == _strategy {
+	if proto.Strategy_STRATEGY_JWT == _strategy {
 		token, err := jwt.Parse(_token, func(_t *jwt.Token) (interface{}, error) {
 			return []byte(config.Schema.Encrypt.Secret), nil
 		})

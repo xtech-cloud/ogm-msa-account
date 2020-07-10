@@ -29,7 +29,6 @@ func (this *Query) List(_ctx context.Context, _req *proto.QueryListRequest, _rsp
 	if nil != err {
 		return err
 	}
-	logger.Infof("has %v accounts", len(accounts))
 
 	total, err := dao.Count()
 	if nil != err {
@@ -45,6 +44,38 @@ func (this *Query) List(_ctx context.Context, _req *proto.QueryListRequest, _rsp
 			CreatedAt: accounts[i].Embedded.CreatedAt.Unix(),
 			UpdatedAt: accounts[i].Embedded.UpdatedAt.Unix(),
 		}
+	}
+	return nil
+}
+
+func (this *Query) Single(_ctx context.Context, _req *proto.QuerySingleRequest, _rsp *proto.QuerySingleResponse) error {
+	logger.Infof("Received Query.Single, req is %v", _req)
+	_rsp.Status = &proto.Status{}
+
+	var err error
+	var account model.Account
+	dao := model.NewAccountDAO()
+	if proto.QueryField_QUERY_FIELD_UUID == _req.Field {
+		account, err = dao.Find(_req.Value)
+	} else if proto.QueryField_QUERY_FIELD_USERNAME == _req.Field {
+		account, err = dao.WhereUsername(_req.Value)
+	}
+
+	if err != nil {
+		return err
+	}
+
+	if account.UUID == "" {
+		_rsp.Status.Code = 1
+		_rsp.Status.Message = "not fount"
+	}
+
+	_rsp.Account = &proto.AccountEntity{
+		Username:  account.Username,
+		Uuid:      account.UUID,
+		Profile:   account.Profile,
+		CreatedAt: account.Embedded.CreatedAt.Unix(),
+		UpdatedAt: account.Embedded.UpdatedAt.Unix(),
 	}
 	return nil
 }

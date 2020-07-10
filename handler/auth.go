@@ -107,7 +107,7 @@ func (this *Auth) Signin(_ctx context.Context, _req *proto.SigninRequest, _rsp *
 		_rsp.Status.Message = "password not matched"
 		return nil
 	}
-	if proto.Strategy_JWT == proto.Strategy(_req.Strategy) {
+	if proto.Strategy_STRATEGY_JWT == proto.Strategy(_req.Strategy) {
 		token, err := tokenFromJWT(account.UUID)
 		if nil != err {
 			return nil
