@@ -68,6 +68,7 @@ func (this *Query) Single(_ctx context.Context, _req *proto.QuerySingleRequest, 
 	if account.UUID == "" {
 		_rsp.Status.Code = 1
 		_rsp.Status.Message = "not fount"
+		return nil
 	}
 
 	_rsp.Account = &proto.AccountEntity{
