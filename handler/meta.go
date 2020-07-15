@@ -6,8 +6,8 @@ import (
 )
 
 func buildNotifyContext(_ctx context.Context, _operator string) context.Context {
-	optLabel := _operator
-	optType := "UUID"
+	optLabel := "UUID:" + _operator
+	optType := "None"
 
 	// 使用metadata覆盖默认值
 	meta, ok := metadata.FromContext(_ctx)

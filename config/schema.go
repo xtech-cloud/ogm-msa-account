@@ -41,9 +41,10 @@ type Service_ struct {
 }
 
 type ConfigSchema_ struct {
-	Service  Service_  `yaml:service`
-	Logger   Logger_   `yaml:logger`
-	Database Database_ `yaml:database`
-	Encrypt  Encrypt_  `yaml:encrypt`
-	Token    Token_    `yaml:token`
+	Service   Service_  `yaml:service`
+	Logger    Logger_   `yaml:logger`
+	Database  Database_ `yaml:database`
+	Encrypt   Encrypt_  `yaml:encrypt`
+	Token     Token_    `yaml:token`
+	Publisher []string  `yaml:publisher`
 }
