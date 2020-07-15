@@ -12,17 +12,18 @@ import (
 	_ "github.com/micro/go-plugins/registry/consul/v2"
 	_ "github.com/micro/go-plugins/registry/etcdv3/v2"
 	proto "github.com/xtech-cloud/omo-msp-account/proto/account"
+	pn "github.com/xtech-cloud/omo-msp-notification/proto/notification"
 )
 
 type Notification struct {
 }
 
-func (this *Notification) Handle(_ctx context.Context, _notify *proto.Notification) error {
+func (this *Notification) Handle(_ctx context.Context, _message *pn.SimpleMessage) error {
 	md, ok := metadata.FromContext(_ctx)
 	if ok {
-		fmt.Println(fmt.Sprintf("[omo.msa.account.notification] Received notify %+v with metadata %+v", _notify, md))
+		fmt.Println(fmt.Sprintf("[omo.msa.account.notification] Received message %+v with metadata %+v", _message, md))
 	} else {
-		fmt.Println(fmt.Sprintf("[omo.msa.account.notification] Received notify %+v without metadata", _notify))
+		fmt.Println(fmt.Sprintf("[omo.msa.account.notification] Received message %+v without metadata", _message))
 	}
 	return nil
 }
@@ -80,7 +81,7 @@ func test(_auth proto.AuthService, _profile proto.ProfileService) {
 			fmt.Println("> Signin")
 			// Make request
 			rsp, err := _auth.Signin(context.Background(), &proto.SigninRequest{
-				Strategy: proto.Strategy_JWT,
+				Strategy: proto.Strategy_STRATEGY_JWT,
 				Username: "user",
 				Password: "11112222",
 			})
@@ -96,7 +97,7 @@ func test(_auth proto.AuthService, _profile proto.ProfileService) {
 			fmt.Println("> Signin")
 			// Make request
 			rsp, err := _auth.Signin(context.Background(), &proto.SigninRequest{
-				Strategy: proto.Strategy_JWT,
+				Strategy: proto.Strategy_STRATEGY_JWT,
 				Username: "user001",
 				Password: "11223344",
 			})
@@ -112,7 +113,7 @@ func test(_auth proto.AuthService, _profile proto.ProfileService) {
 			fmt.Println("> Signin")
 			// Make request
 			rsp, err := _auth.Signin(context.Background(), &proto.SigninRequest{
-				Strategy: proto.Strategy_JWT,
+				Strategy: proto.Strategy_STRATEGY_JWT,
 				Username: "user001",
 				Password: "11112222",
 			})
@@ -129,7 +130,7 @@ func test(_auth proto.AuthService, _profile proto.ProfileService) {
 			fmt.Println("> ResetPasswd")
 			// Make request
 			rsp, err := _auth.ResetPasswd(context.Background(), &proto.ResetPasswdRequest{
-				Strategy:    proto.Strategy_JWT,
+				Strategy:    proto.Strategy_STRATEGY_JWT,
 				AccessToken: accessToken,
 				Password:    "abcdefg",
 			})
@@ -145,7 +146,7 @@ func test(_auth proto.AuthService, _profile proto.ProfileService) {
 			fmt.Println("> ResetPasswd")
 			// Make request
 			rsp, err := _auth.ResetPasswd(context.Background(), &proto.ResetPasswdRequest{
-				Strategy:    proto.Strategy_JWT,
+				Strategy:    proto.Strategy_STRATEGY_JWT,
 				AccessToken: accessToken,
 				Password:    "11112222",
 			})
@@ -161,7 +162,7 @@ func test(_auth proto.AuthService, _profile proto.ProfileService) {
 			fmt.Println("> Update")
 			// Make request
 			rsp, err := _profile.Update(context.Background(), &proto.UpdateProfileRequest{
-				Strategy:    proto.Strategy_JWT,
+				Strategy:    proto.Strategy_STRATEGY_JWT,
 				AccessToken: accessToken,
 				Profile:     "myprofile:" + time.Now().String(),
 			})
@@ -177,7 +178,7 @@ func test(_auth proto.AuthService, _profile proto.ProfileService) {
 			fmt.Println("> Query")
 			// Make request
 			rsp, err := _profile.Query(context.Background(), &proto.QueryProfileRequest{
-				Strategy:    proto.Strategy_JWT,
+				Strategy:    proto.Strategy_STRATEGY_JWT,
 				AccessToken: accessToken,
 			})
 			if err != nil {
