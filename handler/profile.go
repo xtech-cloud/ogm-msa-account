@@ -69,7 +69,7 @@ func (this *Profile) Update(_ctx context.Context, _req *proto.UpdateProfileReque
 		return err
 	}
 	// 发布消息
-	ctx := buildNotifyContext(_ctx, account.UUID)
+	ctx := buildNotifyContext(_ctx, "root")
 	publisher.Publish(ctx, "/profile/update", _req, _rsp)
 	return nil
 }

@@ -62,7 +62,7 @@ func (this *Auth) Signup(_ctx context.Context, _req *proto.SignupRequest, _rsp *
 
 	// 发布消息
     _req.Password = "************"
-	ctx := buildNotifyContext(_ctx, uuid)
+	ctx := buildNotifyContext(_ctx, "root")
 	publisher.Publish(ctx, "/auth/signup", _req, _rsp)
 	return nil
 }
@@ -116,7 +116,7 @@ func (this *Auth) Signin(_ctx context.Context, _req *proto.SigninRequest, _rsp *
 	_rsp.Uuid = account.UUID
 	// 发布消息
     _req.Password = "************"
-	ctx := buildNotifyContext(_ctx, account.UUID)
+	ctx := buildNotifyContext(_ctx, "root")
 	publisher.Publish(ctx, "/auth/signin", _req, _rsp)
 	return nil
 }
@@ -125,13 +125,8 @@ func (this *Auth) Signout(_ctx context.Context, _req *proto.SignoutRequest, _rsp
 	logger.Infof("Received Auth.Signout, accessToken is %v", _req.AccessToken)
 	_rsp.Status = &proto.Status{}
 
-	uuid, err := useridFromToken(_req.AccessToken, _req.Strategy)
-	if nil != err {
-		return err
-	}
-
 	// 发布消息
-	ctx := buildNotifyContext(_ctx, uuid)
+	ctx := buildNotifyContext(_ctx, "root")
 	publisher.Publish(ctx, "/auth/signout", _req, _rsp)
 	return nil
 }
@@ -178,7 +173,7 @@ func (this *Auth) ResetPasswd(_ctx context.Context, _req *proto.ResetPasswdReque
 	}
 
 	// 发布消息
-	ctx := buildNotifyContext(_ctx, uuid)
+	ctx := buildNotifyContext(_ctx, "root")
 	publisher.Publish(ctx, "/auth/resetpassword", _req, _rsp)
 	return nil
 }
