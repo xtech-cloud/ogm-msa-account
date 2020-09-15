@@ -37,9 +37,6 @@ func (this *Profile) Query(_ctx context.Context, _req *proto.QueryProfileRequest
 	}
 	_rsp.Profile = account.Profile
 
-	// 发布消息
-	ctx := buildNotifyContext(_ctx, account.UUID)
-	publisher.Publish(ctx, "/profile/query", _req.AccessToken, account.UUID)
 	return nil
 }
 
@@ -73,6 +70,6 @@ func (this *Profile) Update(_ctx context.Context, _req *proto.UpdateProfileReque
 	}
 	// 发布消息
 	ctx := buildNotifyContext(_ctx, account.UUID)
-	publisher.Publish(ctx, "/profile/update", _req.AccessToken, account.UUID)
+	publisher.Publish(ctx, "/profile/update", _req, _rsp)
 	return nil
 }

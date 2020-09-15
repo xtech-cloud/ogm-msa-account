@@ -2,6 +2,7 @@ package config
 
 const defaultYAML string = `
 service:
+  name: omo.msa.account
   address: :9601
   ttl: 15
   interval: 10
@@ -23,10 +24,9 @@ token:
   jwt:
     expiry: 1
 publisher:
-- /signup
-- /signin
-- /signout
-- /reset/password
-- /profile/query
+- /auth/signup
+- /auth/signin
+- /auth/signout
+- /auth/resetpassword
 - /profile/update
 `

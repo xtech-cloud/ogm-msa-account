@@ -24,7 +24,7 @@ func main() {
 
 	// New Service
 	service := micro.NewService(
-		micro.Name("omo.msa.account"),
+		micro.Name(config.Schema.Service.Name),
 		micro.Version(BuildVersion),
 		micro.RegisterTTL(time.Second*time.Duration(config.Schema.Service.TTL)),
 		micro.RegisterInterval(time.Second*time.Duration(config.Schema.Service.Interval)),
@@ -35,7 +35,7 @@ func main() {
 	service.Init()
 
 	// Register publisher
-	publisher.DefaultPublisher = micro.NewPublisher("omo.msa.account.notification", service.Client())
+	publisher.DefaultPublisher = micro.NewPublisher(config.Schema.Service.Name + ".notification", service.Client())
 	// Register Handler
 	proto.RegisterAuthHandler(service.Server(), new(handler.Auth))
 	proto.RegisterProfileHandler(service.Server(), new(handler.Profile))

@@ -61,8 +61,9 @@ func (this *Auth) Signup(_ctx context.Context, _req *proto.SignupRequest, _rsp *
 	_rsp.Uuid = uuid
 
 	// 发布消息
+    _req.Password = "************"
 	ctx := buildNotifyContext(_ctx, uuid)
-	publisher.Publish(ctx, "/signup", "", uuid)
+	publisher.Publish(ctx, "/auth/signup", _req, _rsp)
 	return nil
 }
 
@@ -114,8 +115,9 @@ func (this *Auth) Signin(_ctx context.Context, _req *proto.SigninRequest, _rsp *
 	}
 	_rsp.Uuid = account.UUID
 	// 发布消息
+    _req.Password = "************"
 	ctx := buildNotifyContext(_ctx, account.UUID)
-	publisher.Publish(ctx, "/signin", _rsp.AccessToken, _rsp.Uuid)
+	publisher.Publish(ctx, "/auth/signin", _req, _rsp)
 	return nil
 }
 
@@ -130,7 +132,7 @@ func (this *Auth) Signout(_ctx context.Context, _req *proto.SignoutRequest, _rsp
 
 	// 发布消息
 	ctx := buildNotifyContext(_ctx, uuid)
-	publisher.Publish(ctx, "/signout", _req.AccessToken, uuid)
+	publisher.Publish(ctx, "/auth/signout", _req, _rsp)
 	return nil
 }
 
@@ -177,6 +179,6 @@ func (this *Auth) ResetPasswd(_ctx context.Context, _req *proto.ResetPasswdReque
 
 	// 发布消息
 	ctx := buildNotifyContext(_ctx, uuid)
-	publisher.Publish(ctx, "/reset/password", _req.AccessToken, uuid)
+	publisher.Publish(ctx, "/auth/resetpassword", _req, _rsp)
 	return nil
 }
