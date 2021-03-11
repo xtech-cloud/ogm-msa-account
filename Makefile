@@ -28,16 +28,21 @@ clean:
 .PHONY: call
 TOKEN := $(shell cat /tmp/msa-token)
 call:
-	MICRO_REGISTRY=consul micro call omo.msa.account Auth.Signup '{"username":"user001", "password":"11112222"}'
-	MICRO_REGISTRY=consul micro call omo.msa.account Auth.Signin '{"strategy":1, "username":"user", "password":"22223333"}'
-	MICRO_REGISTRY=consul micro call omo.msa.account Auth.Signin '{"strategy":1, "username":"user001", "password":"222333444"}'
-	MICRO_REGISTRY=consul micro call omo.msa.account Auth.Signin '{"strategy":1, "username":"user001", "password":"11112222"}' 
-	MICRO_REGISTRY=consul micro call omo.msa.account Auth.Signout '{"accessToken":"${TOKEN}", "strategy":1}'
-	MICRO_REGISTRY=consul micro call omo.msa.account Auth.ResetPasswd '{"accessToken":"${TOKEN}", "password":"22221111", "strategy":1}'
-	MICRO_REGISTRY=consul micro call omo.msa.account Auth.ResetPasswd '{"accessToken":"${TOKEN}", "password":"11112222", "strategy":1}'
-	MICRO_REGISTRY=consul micro call omo.msa.account Profile.Update '{"accessToken":"${TOKEN}", "profile":"sdasdsada", "strategy":1}'
-	MICRO_REGISTRY=consul micro call omo.msa.account Profile.Query '{"accessToken":"${TOKEN}", "strategy":1}'
-	MICRO_REGISTRY=consul micro call omo.msa.account Query.List '{"count":10}'
+	MICRO_REGISTRY=consul micro call omo.api.msa.account Healthy.Echo '{"msg":"hello"}'
+	MICRO_REGISTRY=consul micro call omo.api.msa.account Auth.Signup '{"username":"user001", "password":"11112222"}'
+	MICRO_REGISTRY=consul micro call omo.api.msa.account Auth.Signin '{"strategy":1, "username":"user", "password":"22223333"}'
+	MICRO_REGISTRY=consul micro call omo.api.msa.account Auth.Signin '{"strategy":1, "username":"user001", "password":"222333444"}'
+	MICRO_REGISTRY=consul micro call omo.api.msa.account Auth.Signin '{"strategy":1, "username":"user001", "password":"11112222"}' 
+	MICRO_REGISTRY=consul micro call omo.api.msa.account Auth.Signout '{"accessToken":"${TOKEN}", "strategy":1}'
+	MICRO_REGISTRY=consul micro call omo.api.msa.account Auth.ResetPasswd '{"accessToken":"${TOKEN}", "password":"22221111", "strategy":1}'
+	MICRO_REGISTRY=consul micro call omo.api.msa.account Auth.ResetPasswd '{"accessToken":"${TOKEN}", "password":"11112222", "strategy":1}'
+	MICRO_REGISTRY=consul micro call omo.api.msa.account Profile.Update '{"accessToken":"${TOKEN}", "profile":"sdasdsada", "strategy":1}'
+	MICRO_REGISTRY=consul micro call omo.api.msa.account Profile.Query '{"accessToken":"${TOKEN}", "strategy":1}'
+	MICRO_REGISTRY=consul micro call omo.api.msa.account Query.List '{"count":10}'
+
+.PHONY: post
+post:
+	curl -X POST -d '{"msg":"hello"}' 127.0.0.1:8080/msa/account/Healthy/Echo
 
 .PHONY: tcall
 tcall:
