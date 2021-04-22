@@ -5,56 +5,56 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"fmt"
-	"omo-msa-account/config"
+	"ogm-msa-account/config"
 
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/mysql"
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	"gorm.io/gorm"
+	"gorm.io/driver/sqlite"
+	"gorm.io/driver/mysql"
 	"github.com/micro/go-micro/v2/logger"
 	uuid "github.com/satori/go.uuid"
 )
 
 var base64Coder = base64.NewEncoding("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_")
 
-var dialectSqlName string
-var dialectSqlArgs string
-var saltSuffix string
+type Conn struct {
+	DB *gorm.DB
+}
+
+var DefaultConn *Conn
 
 func Setup() {
+    var err error
+    var db *gorm.DB
+
 	if config.Schema.Database.Lite {
-		dialectSqlName = "sqlite3"
-		sqlite_filepath := config.Schema.Database.SQLite.Path
-		dialectSqlArgs = sqlite_filepath
-		logger.Warnf("!!! Database is lite mode, file at %v", sqlite_filepath)
+        dsn := config.Schema.Database.SQLite.Path
+		logger.Warnf("!!! Database is lite mode, file at %v", dsn)
+        db, err = gorm.Open(sqlite.Open(dsn), &gorm.Config{})
 	} else {
-		dialectSqlName = "mysql"
 		mysql_addr := config.Schema.Database.MySQL.Address
 		mysql_user := config.Schema.Database.MySQL.User
 		mysql_passwd := config.Schema.Database.MySQL.Password
 		mysql_db := config.Schema.Database.MySQL.DB
-		dialectSqlArgs = fmt.Sprintf("%s:%s@(%s)/%s?charset=utf8&parseTime=True", mysql_user, mysql_passwd, mysql_addr, mysql_db)
+        dsn := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8&parseTime=True", mysql_user, mysql_passwd, mysql_addr, mysql_db)
+        db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	}
+
+    if nil != err {
+        logger.Fatal(err)
+    }
+	DefaultConn = &Conn{
+        DB: db,
+    }
+}
+
+func Cancel() {
 }
 
 func AutoMigrateDatabase() {
-	db, err := openSqlDB()
+    err := DefaultConn.DB.AutoMigrate(&Account{})
 	if nil != err {
-		panic(err)
+        logger.Fatal(err)
 	}
-	defer closeSqlDB(db)
-
-	err = db.AutoMigrate(&Account{}).Error
-	if nil != err {
-		panic(err)
-	}
-}
-
-func openSqlDB() (*gorm.DB, error) {
-	return gorm.Open(dialectSqlName, dialectSqlArgs)
-}
-
-func closeSqlDB(_db *gorm.DB) {
-	_db.Close()
 }
 
 func NewUUID() string {

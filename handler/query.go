@@ -2,10 +2,10 @@ package handler
 
 import (
 	"context"
-	"omo-msa-account/model"
+	"ogm-msa-account/model"
 
 	"github.com/micro/go-micro/v2/logger"
-	proto "github.com/xtech-cloud/omo-msp-account/proto/account"
+	proto "github.com/xtech-cloud/ogm-msp-account/proto/account"
 )
 
 type Query struct{}
@@ -24,7 +24,7 @@ func (this *Query) List(_ctx context.Context, _req *proto.QueryListRequest, _rsp
 		count = _req.Count
 	}
 
-	dao := model.NewAccountDAO()
+	dao := model.NewAccountDAO(nil)
 	accounts, err := dao.List(offset, count)
 	if nil != err {
 		return err
@@ -54,7 +54,7 @@ func (this *Query) Single(_ctx context.Context, _req *proto.QuerySingleRequest, 
 
 	var err error
 	var account model.Account
-	dao := model.NewAccountDAO()
+	dao := model.NewAccountDAO(nil)
 	if proto.QueryField_QUERY_FIELD_UUID == _req.Field {
 		account, err = dao.Find(_req.Value)
 	} else if proto.QueryField_QUERY_FIELD_USERNAME == _req.Field {

@@ -7,10 +7,10 @@ import (
 	"crypto/md5"
 	"crypto/sha512"
 	"errors"
-	"omo-msa-account/config"
+	"ogm-msa-account/config"
 
-	"github.com/jinzhu/gorm"
 	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
 )
 
 type Account struct {
@@ -24,14 +24,21 @@ type Account struct {
 var ErrAccountExits = errors.New("account exists")
 
 func (Account) TableName() string {
-	return "msa_account"
+	return "ogm_account"
 }
 
 type AccountDAO struct {
+	conn *Conn
 }
 
-func NewAccountDAO() *AccountDAO {
-	return &AccountDAO{}
+func NewAccountDAO(_conn *Conn) *AccountDAO {
+	conn := DefaultConn
+	if nil != _conn {
+		conn = _conn
+	}
+	return &AccountDAO{
+		conn: conn,
+	}
 }
 
 func doMD5(_pwd string) []byte {
@@ -60,7 +67,7 @@ func doAES(_orig []byte, _secret []byte) []byte {
 	return crypted
 }
 
-func (AccountDAO) GeneratePassword(_password string, _username string) string {
+func (this *AccountDAO) GeneratePassword(_password string, _username string) string {
 	pwd := doSHA512(_password)
 	secretAES := doMD5(_username + config.Schema.Encrypt.Secret)
 	passwd := doAES(pwd, secretAES)
@@ -69,115 +76,60 @@ func (AccountDAO) GeneratePassword(_password string, _username string) string {
 	return password
 }
 
-func (AccountDAO) VerifyPassword(_password string, _username string, _dbPWD string) error {
+func (this *AccountDAO) VerifyPassword(_password string, _username string, _dbPWD string) error {
 	pwd := doSHA512(_password)
 	secretAES := doMD5(_username + config.Schema.Encrypt.Secret)
 	passwd := doAES(pwd, secretAES)
 	return bcrypt.CompareHashAndPassword([]byte(_dbPWD), passwd)
 }
 
-func (AccountDAO) Exists(_username string) (bool, error) {
-	db, err := openSqlDB()
-	if nil != err {
-		return false, err
-	}
-	defer closeSqlDB(db)
-
+func (this *AccountDAO) Exists(_username string) (bool, error) {
+	db := this.conn.DB
 	var account Account
-	result := db.Where("username= ?", _username).First(&account)
-	if result.RecordNotFound() {
-		return false, nil
-	}
-
+	result := db.Where("username= ?", _username).Limit(1).Find(&account)
 	return "" != account.UUID, result.Error
 }
 
-func (AccountDAO) Insert(_account Account) error {
-	db, err := openSqlDB()
-	if nil != err {
-		return err
-	}
-	defer closeSqlDB(db)
-
-	return db.Create(&_account).Error
+func (this *AccountDAO) Insert(_account *Account) error {
+	db := this.conn.DB
+	return db.Create(_account).Error
 }
 
-func (AccountDAO) UpdateProfile(_uuid string, _profile string) error {
-	db, err := openSqlDB()
-	if nil != err {
-		return err
-	}
-	defer closeSqlDB(db)
-
+func (this *AccountDAO) UpdateProfile(_uuid string, _profile string) error {
+	db := this.conn.DB
 	return db.Model(&Account{}).Where("uuid = ?", _uuid).Update("profile", _profile).Error
 }
 
-func (AccountDAO) UpdatePassword(_uuid string, _password string) error {
-	db, err := openSqlDB()
-	if nil != err {
-		return err
-	}
-	defer closeSqlDB(db)
-
+func (this *AccountDAO) UpdatePassword(_uuid string, _password string) error {
+	db := this.conn.DB
 	return db.Model(&Account{}).Where("uuid = ?", _uuid).Update("password", _password).Error
 }
 
-/*
-
-func (AccountDAO) List() ([]Account, error) {
-	var accounts []Account
-	err := db.Find(&accounts).Error
-	return accounts, err
-}
-*/
-
-func (AccountDAO) Find(_uuid string) (Account, error) {
+func (this *AccountDAO) Find(_uuid string) (Account, error) {
+	db := this.conn.DB
 	var account Account
-	db, err := openSqlDB()
-	if nil != err {
-		return account, err
-	}
-	defer closeSqlDB(db)
-
 	res := db.Where("uuid = ?", _uuid).First(&account)
-	if res.RecordNotFound() {
-		return Account{}, nil
-	}
-	return account, err
-}
-
-func (AccountDAO) WhereUsername(_username string) (Account, error) {
-	var account Account
-	db, err := openSqlDB()
-	if nil != err {
-		return account, err
-	}
-	defer closeSqlDB(db)
-
-	res := db.Where("username= ?", _username).First(&account)
-	if res.RecordNotFound() {
+	if errors.Is(res.Error, gorm.ErrRecordNotFound) {
 		return Account{}, nil
 	}
 	return account, res.Error
 }
 
-func (AccountDAO) List(_offset int64, _count int64) ([]*Account, error) {
-	db, err := openSqlDB()
-	if nil != err {
-		return nil, err
-	}
-	defer closeSqlDB(db)
+func (this *AccountDAO) WhereUsername(_username string) (Account, error) {
+	db := this.conn.DB
+	var account Account
+	res := db.Where("username= ?", _username).Limit(1).Find(&account)
+	return account, res.Error
+}
 
+func (this *AccountDAO) List(_offset int64, _count int64) ([]*Account, error) {
+	db := this.conn.DB
 	var accounts []*Account
-	res := db.Offset(_offset).Limit(_count).Order("created_at desc").Find(&accounts)
+	res := db.Offset(int(_offset)).Limit(int(_count)).Order("created_at desc").Find(&accounts)
 	return accounts, res.Error
 }
-func (AccountDAO) Count() (int64, error) {
-	db, err := openSqlDB()
-	if nil != err {
-		return 0, err
-	}
-	defer closeSqlDB(db)
+func (this *AccountDAO) Count() (int64, error) {
+	db := this.conn.DB
 	count := int64(0)
 	res := db.Model(&Account{}).Count(&count)
 	return count, res.Error

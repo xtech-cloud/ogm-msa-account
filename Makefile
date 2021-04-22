@@ -1,4 +1,4 @@
-APP_NAME := omo-msa-account
+APP_NAME := ogm-account
 BUILD_VERSION   := $(shell git tag --contains)
 BUILD_TIME      := $(shell date "+%F %T")
 COMMIT_SHA1     := $(shell git rev-parse HEAD )
@@ -23,32 +23,30 @@ install:
 
 .PHONY: clean
 clean: 
-	rm -rf /tmp/msa-account.db
+	rm -rf /tmp/ogm-account.db
 
 .PHONY: call
 TOKEN := $(shell cat /tmp/msa-token)
 call:
-	MICRO_REGISTRY=consul micro call omo.api.msa.account Healthy.Echo '{"msg":"hello"}'
-	MICRO_REGISTRY=consul micro call omo.api.msa.account Auth.Signup '{"username":"user001", "password":"11112222"}'
-	MICRO_REGISTRY=consul micro call omo.api.msa.account Auth.Signin '{"strategy":1, "username":"user", "password":"22223333"}'
-	MICRO_REGISTRY=consul micro call omo.api.msa.account Auth.Signin '{"strategy":1, "username":"user001", "password":"222333444"}'
-	MICRO_REGISTRY=consul micro call omo.api.msa.account Auth.Signin '{"strategy":1, "username":"user001", "password":"11112222"}' 
-	MICRO_REGISTRY=consul micro call omo.api.msa.account Auth.Signout '{"accessToken":"${TOKEN}", "strategy":1}'
-	MICRO_REGISTRY=consul micro call omo.api.msa.account Auth.ResetPasswd '{"accessToken":"${TOKEN}", "password":"22221111", "strategy":1}'
-	MICRO_REGISTRY=consul micro call omo.api.msa.account Auth.ResetPasswd '{"accessToken":"${TOKEN}", "password":"11112222", "strategy":1}'
-	MICRO_REGISTRY=consul micro call omo.api.msa.account Profile.Update '{"accessToken":"${TOKEN}", "profile":"sdasdsada", "strategy":1}'
-	MICRO_REGISTRY=consul micro call omo.api.msa.account Profile.Query '{"accessToken":"${TOKEN}", "strategy":1}'
-	MICRO_REGISTRY=consul micro call omo.api.msa.account Query.List '{"count":10}'
+	MICRO_REGISTRY=consul micro call xtc.api.ogm.account Healthy.Echo '{"msg":"hello"}'
+	MICRO_REGISTRY=consul micro call xtc.api.ogm.account Auth.Signup '{"username":"user001", "password":"11112222"}'
+	MICRO_REGISTRY=consul micro call xtc.api.ogm.account Auth.Signin '{"strategy":1, "username":"user", "password":"22223333"}'
+	MICRO_REGISTRY=consul micro call xtc.api.ogm.account Auth.Signin '{"strategy":1, "username":"user001", "password":"222333444"}'
+	MICRO_REGISTRY=consul micro call xtc.api.ogm.account Auth.Signin '{"strategy":1, "username":"user001", "password":"11112222"}' 
+	MICRO_REGISTRY=consul micro call xtc.api.ogm.account Auth.Signout '{"accessToken":"${TOKEN}", "strategy":1}'
+	MICRO_REGISTRY=consul micro call xtc.api.ogm.account Auth.ResetPasswd '{"accessToken":"${TOKEN}", "password":"22221111", "strategy":1}'
+	MICRO_REGISTRY=consul micro call xtc.api.ogm.account Auth.ResetPasswd '{"accessToken":"${TOKEN}", "password":"11112222", "strategy":1}'
+	MICRO_REGISTRY=consul micro call xtc.api.ogm.account Profile.Update '{"accessToken":"${TOKEN}", "profile":"sdasdsada", "strategy":1}'
+	MICRO_REGISTRY=consul micro call xtc.api.ogm.account Profile.Query '{"accessToken":"${TOKEN}", "strategy":1}'
+	MICRO_REGISTRY=consul micro call xtc.api.ogm.account Query.List '{"count":10}'
 
 .PHONY: post
 post:
-	curl -X POST -d '{"msg":"hello"}' 127.0.0.1:8080/msa/account/Healthy/Echo
+	curl -X POST -d '{"msg":"hello"}' 127.0.0.1:8080/ogm/account/Healthy/Echo
 
-.PHONY: tcall
-tcall:
-	mkdir -p ./bin
-	go build -o ./bin/ ./tester
-	./bin/tester
+.PHONY: bm
+bm:
+	python3 benchmark.py
 
 .PHONY: dist
 dist:

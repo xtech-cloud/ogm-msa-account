@@ -2,11 +2,10 @@ package handler
 
 import (
 	"context"
-	"omo-msa-account/model"
-	"omo-msa-account/publisher"
+	"ogm-msa-account/model"
 
 	"github.com/micro/go-micro/v2/logger"
-	proto "github.com/xtech-cloud/omo-msp-account/proto/account"
+	proto "github.com/xtech-cloud/ogm-msp-account/proto/account"
 )
 
 type Profile struct{}
@@ -20,7 +19,7 @@ func (this *Profile) Query(_ctx context.Context, _req *proto.QueryProfileRequest
 		return nil
 	}
 
-	dao := model.NewAccountDAO()
+	dao := model.NewAccountDAO(nil)
 
 	uuid, err := useridFromToken(_req.AccessToken, _req.Strategy)
 	if nil != err {
@@ -43,7 +42,7 @@ func (this *Profile) Query(_ctx context.Context, _req *proto.QueryProfileRequest
 func (this *Profile) Update(_ctx context.Context, _req *proto.UpdateProfileRequest, _rsp *proto.UpdateProfileResponse) error {
 	logger.Infof("Received Profile.Update, accessToken is %v", _req.AccessToken)
 	_rsp.Status = &proto.Status{}
-	dao := model.NewAccountDAO()
+	dao := model.NewAccountDAO(nil)
 
 	if "" == _req.AccessToken {
 		_rsp.Status.Code = 1
@@ -68,8 +67,5 @@ func (this *Profile) Update(_ctx context.Context, _req *proto.UpdateProfileReque
 	if nil != err {
 		return err
 	}
-	// 发布消息
-	ctx := buildNotifyContext(_ctx, "root")
-	publisher.Publish(ctx, "/profile/update", _req, _rsp)
 	return nil
 }

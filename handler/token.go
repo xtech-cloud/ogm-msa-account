@@ -2,11 +2,11 @@ package handler
 
 import (
 	"errors"
-	"omo-msa-account/config"
+	"ogm-msa-account/config"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
-	proto "github.com/xtech-cloud/omo-msp-account/proto/account"
+	proto "github.com/xtech-cloud/ogm-msp-account/proto/account"
 )
 
 func tokenFromJWT(_userid string) (string, error) {
