@@ -15,7 +15,7 @@ database:
     address: localhost:3306
     user: root
     password: mysql@OMO
-    db: ogm_account
+    db: ogm
   sqlite:
     path: /tmp/ogm-account.db
 encrypt:
