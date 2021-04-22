@@ -19,6 +19,7 @@ import (
 func main() {
 	config.Setup()
 	model.Setup()
+    defer model.Cancel()
 	model.AutoMigrateDatabase()
 
 	// New Service
