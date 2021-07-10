@@ -10,7 +10,7 @@ logger:
   level: trace
   dir: /var/log/ogm/
 database:
-  lite: true
+  driver: sqlite
   mysql:
     address: localhost:3306
     user: root
