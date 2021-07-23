@@ -7,7 +7,6 @@ import (
 	"crypto/md5"
 	"crypto/sha512"
 	"errors"
-	"ogm-msa-account/config"
 
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
@@ -69,7 +68,7 @@ func doAES(_orig []byte, _secret []byte) []byte {
 
 func (this *AccountDAO) GeneratePassword(_password string, _username string) string {
 	pwd := doSHA512(_password)
-	secretAES := doMD5(_username + config.Schema.Encrypt.Secret)
+	secretAES := doMD5(_username)
 	passwd := doAES(pwd, secretAES)
 	hash, _ := bcrypt.GenerateFromPassword(passwd, bcrypt.DefaultCost)
 	password := string(hash)
@@ -78,7 +77,7 @@ func (this *AccountDAO) GeneratePassword(_password string, _username string) str
 
 func (this *AccountDAO) VerifyPassword(_password string, _username string, _dbPWD string) error {
 	pwd := doSHA512(_password)
-	secretAES := doMD5(_username + config.Schema.Encrypt.Secret)
+	secretAES := doMD5(_username)
 	passwd := doAES(pwd, secretAES)
 	return bcrypt.CompareHashAndPassword([]byte(_dbPWD), passwd)
 }

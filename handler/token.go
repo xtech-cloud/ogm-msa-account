@@ -16,13 +16,13 @@ func tokenFromJWT(_userid string) (string, error) {
 	claims["iat"] = time.Now().Unix()
 	claims["id"] = _userid
 	token.Claims = claims
-	return token.SignedString([]byte(config.Schema.Encrypt.Secret))
+	return token.SignedString([]byte(config.Schema.Token.JWT.Secret))
 }
 
 func useridFromToken(_token string, _strategy proto.Strategy) (string, error) {
 	if proto.Strategy_STRATEGY_JWT == _strategy {
 		token, err := jwt.Parse(_token, func(_t *jwt.Token) (interface{}, error) {
-			return []byte(config.Schema.Encrypt.Secret), nil
+			return []byte(config.Schema.Token.JWT.Secret), nil
 		})
 		if nil != err {
 			return "", err

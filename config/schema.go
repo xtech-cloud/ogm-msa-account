@@ -17,17 +17,14 @@ type MySQL_ struct {
 }
 
 type Database_ struct {
-	Lite   bool    `yaml:lite`
+	Driver string  `yaml:driver`
 	MySQL  MySQL_  `yaml:mysql`
 	SQLite SQLite_ `yaml:sqlite`
 }
 
-type Encrypt_ struct {
-	Secret string `yaml:secret`
-}
-
 type JWT_ struct {
-	Expiry int64 `yaml:expiry`
+	Expiry int64  `yaml:expiry`
+	Secret string `yaml:secret`
 }
 
 type Token_ struct {
@@ -45,6 +42,5 @@ type ConfigSchema_ struct {
 	Service  Service_  `yaml:service`
 	Logger   Logger_   `yaml:logger`
 	Database Database_ `yaml:database`
-	Encrypt  Encrypt_  `yaml:encrypt`
 	Token    Token_    `yaml:token`
 }

@@ -2,25 +2,27 @@ package config
 
 const defaultYAML string = `
 service:
-  name: xtc.api.ogm.account
-  address: :9601
+  name: xtc.ogm.account
+  address: :18801
   ttl: 15
   interval: 10
 logger:
   level: trace
   dir: /var/log/ogm/
 database:
-  lite: true
+  # 驱动类型，可选值为 [sqlite,mysql]
+  driver: sqlite
   mysql:
     address: localhost:3306
     user: root
-    password: mysql@OMO
+    password: mysql@XTC
     db: ogm
   sqlite:
     path: /tmp/ogm-account.db
-encrypt:
-  secret: 964E50CA8F603714BF373A4C03E07739
 token:
   jwt:
-    expiry: 1
+    # 过期时间（小时）
+    expiry: 12
+    # jwt密钥
+    secret: c56de585baa85b8d689116a391371035
 `
