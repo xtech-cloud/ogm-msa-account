@@ -119,8 +119,8 @@ func (this *Auth) Signout(_ctx context.Context, _req *proto.SignoutRequest, _rsp
 	return nil
 }
 
-func (this *Auth) ResetPasswd(_ctx context.Context, _req *proto.ResetPasswdRequest, _rsp *proto.ResetPasswdResponse) error {
-	logger.Infof("Received Auth.ResetPasswd, accessToken is %v", _req.AccessToken)
+func (this *Auth) ChangePasswd(_ctx context.Context, _req *proto.ChangePasswdRequest, _rsp *proto.ChangePasswdResponse) error {
+	logger.Infof("Received Auth.ChangePasswd, accessToken is %v", _req.AccessToken)
 	_rsp.Status = &proto.Status{}
 
 	if "" == _req.AccessToken {

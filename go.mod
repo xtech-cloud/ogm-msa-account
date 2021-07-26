@@ -12,7 +12,7 @@ require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/satori/go.uuid v1.2.0
 	github.com/sirupsen/logrus v1.8.1
-	github.com/xtech-cloud/ogm-msp-account v1.14.0
+	github.com/xtech-cloud/ogm-msp-account v3.0.1+incompatible
 	golang.org/x/crypto v0.0.0-20210513164829-c07d793c2f9a
 	google.golang.org/genproto v0.0.0-20210721163202-f1cecdd8b78a // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
