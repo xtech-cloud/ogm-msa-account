@@ -28,17 +28,17 @@ clean:
 .PHONY: call
 TOKEN := $(shell cat /tmp/msa-token)
 call:
-	MICRO_REGISTRY=consul micro call xtc.api.ogm.account Healthy.Echo '{"msg":"hello"}'
-	MICRO_REGISTRY=consul micro call xtc.api.ogm.account Auth.Signup '{"username":"user001", "password":"11112222"}'
-	MICRO_REGISTRY=consul micro call xtc.api.ogm.account Auth.Signin '{"strategy":1, "username":"user", "password":"22223333"}'
-	MICRO_REGISTRY=consul micro call xtc.api.ogm.account Auth.Signin '{"strategy":1, "username":"user001", "password":"222333444"}'
-	MICRO_REGISTRY=consul micro call xtc.api.ogm.account Auth.Signin '{"strategy":1, "username":"user001", "password":"11112222"}' 
-	MICRO_REGISTRY=consul micro call xtc.api.ogm.account Auth.Signout '{"accessToken":"${TOKEN}", "strategy":1}'
-	MICRO_REGISTRY=consul micro call xtc.api.ogm.account Auth.ResetPasswd '{"accessToken":"${TOKEN}", "password":"22221111", "strategy":1}'
-	MICRO_REGISTRY=consul micro call xtc.api.ogm.account Auth.ResetPasswd '{"accessToken":"${TOKEN}", "password":"11112222", "strategy":1}'
-	MICRO_REGISTRY=consul micro call xtc.api.ogm.account Profile.Update '{"accessToken":"${TOKEN}", "profile":"sdasdsada", "strategy":1}'
-	MICRO_REGISTRY=consul micro call xtc.api.ogm.account Profile.Query '{"accessToken":"${TOKEN}", "strategy":1}'
-	MICRO_REGISTRY=consul micro call xtc.api.ogm.account Query.List '{"count":10}'
+	MICRO_REGISTRY=etcd micro call xtc.ogm.account Healthy.Echo '{"msg":"hello"}'
+	MICRO_REGISTRY=etcd micro call xtc.ogm.account Auth.Signup '{"username":"user001", "password":"11112222"}'
+	MICRO_REGISTRY=etcd micro call xtc.ogm.account Auth.Signin '{"strategy":1, "username":"user", "password":"22223333"}'
+	MICRO_REGISTRY=etcd micro call xtc.ogm.account Auth.Signin '{"strategy":1, "username":"user001", "password":"222333444"}'
+	MICRO_REGISTRY=etcd micro call xtc.ogm.account Auth.Signin '{"strategy":1, "username":"user001", "password":"11112222"}' 
+	MICRO_REGISTRY=etcd micro call xtc.ogm.account Auth.Signout '{"accessToken":"${TOKEN}", "strategy":1}'
+	MICRO_REGISTRY=etcd micro call xtc.ogm.account Auth.ResetPasswd '{"accessToken":"${TOKEN}", "password":"22221111", "strategy":1}'
+	MICRO_REGISTRY=etcd micro call xtc.ogm.account Auth.ResetPasswd '{"accessToken":"${TOKEN}", "password":"11112222", "strategy":1}'
+	MICRO_REGISTRY=etcd micro call xtc.ogm.account Profile.Update '{"accessToken":"${TOKEN}", "profile":"sdasdsada", "strategy":1}'
+	MICRO_REGISTRY=etcd micro call xtc.ogm.account Profile.Query '{"accessToken":"${TOKEN}", "strategy":1}'
+	MICRO_REGISTRY=etcd micro call xtc.ogm.account Query.List '{"count":10}'
 
 .PHONY: post
 post:
